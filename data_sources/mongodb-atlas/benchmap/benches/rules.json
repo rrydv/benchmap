@@ -1,0 +1,50 @@
+{
+    "collection": "benches",
+    "database": "benchmap",
+    "roles": [
+        {
+            "name": "owner",
+            "apply_when": {
+                "userid": "%%user.id"
+            },
+            "fields": {
+                "area": {},
+                "author": {},
+                "date_created": {},
+                "date_modified": {},
+                "lat": {},
+                "long": {},
+                "name": {},
+                "photo_urls": {},
+                "rating": {}
+            },
+            "read": true,
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        },
+        {
+            "name": "non-owner",
+            "apply_when": {},
+            "fields": {
+                "area": {},
+                "author": {},
+                "date_created": {},
+                "date_modified": {},
+                "lat": {},
+                "long": {},
+                "name": {},
+                "photo_urls": {},
+                "rating": {}
+            },
+            "read": true,
+            "write": false,
+            "insert": false,
+            "delete": false,
+            "search": true,
+            "additional_fields": {}
+        }
+    ]
+}
