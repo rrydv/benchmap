@@ -17,7 +17,7 @@ let popupContent = L.popup({maxWidth:"auto"}).setContent(`
 //marker for the random bench
 L.circleMarker(randomBench, {renderer:myRenderer}).addTo(map).bindPopup(popupContent)
 
-let url = 'http://127.0.0.1:5000/benches'
+let url = `${document.URL}/benches`
 let resp = fetch(url,{mode:'cors'}).then(response => response.json()).then(data => {
     for (let i = 0; i < data.length; i++){
         L.circleMarker([data[i]["lat"],data[i]["long"]]).addTo(map)
