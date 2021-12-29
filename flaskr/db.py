@@ -3,16 +3,13 @@ from pymongo import MongoClient
 from bson import json_util
 import json
 from datetime import datetime
-uri = "mongodb+srv://cluster0.6ub77.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
-cert = r"C:\Users\Ruslan\Downloads\X509-cert-157417327393581356.pem"
+import os
 
-client = MongoClient(uri,
-                     tls=True,
-                     tlsCertificateKeyFile=cert)
+uri = os.environ.get("MONGO_DB")
 
 
 def connect_DB(uri):
-    client = MongoClient(uri,tls=True,tlsCertificateKeyFile = cert)
+    client = MongoClient(uri)
     return client
 
 def add_record(collection, bench_params:dict) -> None:
@@ -23,7 +20,7 @@ def add_record(collection, bench_params:dict) -> None:
     print("success")
     
 def fetch_benches() -> list:
-    with MongoClient(uri,tls = True, tlsCertificateKeyFile = cert) as client:
+    with MongoClient(uri) as client:
         db = client["benchmap"]
         collection = db["benches"]
         result = json.loads(json_util.dumps(collection.find()))
