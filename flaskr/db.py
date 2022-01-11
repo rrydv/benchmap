@@ -4,12 +4,12 @@ from bson import json_util
 import json
 from datetime import datetime
 import os
-
+import ssl
 uri = os.environ.get("MONGO_DB")
 
 
 def connect_DB(uri):
-    client = MongoClient(uri)
+    client = MongoClient(uri) #change this 
     return client
 
 def add_record(collection, bench_params:dict) -> None:
