@@ -9,7 +9,7 @@ uri = os.environ.get("MONGO_DB")
 
 
 def connect_DB(uri):
-    client = MongoClient(uri) #change this 
+    client = MongoClient(uri,ssl_cert_reqs=ssl.CERT_NONE) #change this 
     return client
 
 def add_record(collection, bench_params:dict) -> None:
