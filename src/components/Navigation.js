@@ -1,20 +1,31 @@
-import {Navbar, Container, Nav} from 'react-bootstrap'
+import {Navbar, Container, Nav,} from 'react-bootstrap'
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const Navigation = ({onEntryFormClick}) => {
     return (
         <div style={{flex: '0 0 auto'}}>
-            <Navbar bg="dark" variant = "dark" expand="md" sticky='top'>
-            <Container>
-                <Navbar.Brand href="#home">MapBench</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="ms-auto">
-                    <Nav.Link onClick={console.log("click")}>Log in</Nav.Link>
-                    <Nav.Link>Add a bench</Nav.Link>
-                </Nav>
-                </Navbar.Collapse>
-            </Container>
-            </Navbar>
+        <AppBar position="static" style = {{background: "#2F4F4F"}}>
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            MapBench
+          </Typography>
+          <Button color="inherit" onClick = {onEntryFormClick}>Add Bench</Button>
+        </Toolbar>
+      </AppBar>
         </div>
     )
 }

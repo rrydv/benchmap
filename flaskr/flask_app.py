@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, render_template, request
-from db import fetch_benches
+from flask import Flask, jsonify, render_template, request, abort
+from db import fetch_benches, add_record
 from img_processor import process_img
 import uuid
 from dataclasses import dataclass
+from werkzeug.exceptions import BadRequestKeyError
 
-app = Flask(__name__, static_folder="build/static", template_folder="build")
+app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 
 @app.route('/', methods = ["GET"])
 def home():
@@ -15,14 +16,17 @@ def home():
 def handle_bench_form():
     str_uuid = str(uuid.uuid4())
     form=request.form
-
-    form_content={
-        "area":form["area"],
-        "lat":form["lat"],
-        "lng":form["lng"],
-        "rating":form["rating"],
-        "uuid":str_uuid
-    }
+    try:
+        form_content={
+            "area":form["area"],
+            "lat":form["lat"],
+            "lng":form["lng"],
+            "rating":form["rating"],
+            "uuid":str_uuid
+        }
+    except BadRequestKeyError:
+        abort(400)
+    
     for key in request.files:
         img_result = process_img(img_input = request.files[key], 
                     uuid = str_uuid, name = key)
@@ -31,11 +35,12 @@ def handle_bench_form():
         else:
             return img_result
     
-    
-    print(request.files)
-    print(form_content)
+    try:
+        add_record(form_content)
+    except ValueError:
+        abort(400, "Empty form was provided, can't add data!")
+
         
-    return render_template('index.html')
 
 @app.route('/benches')
 def all_benches():

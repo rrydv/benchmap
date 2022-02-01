@@ -1,7 +1,6 @@
 import "./App.css";
 import MainPage from './components/MainPage'
 import EntryForm from "./components/EntryForm";
-import TestForm from "./components/TestForm";
 import { useState } from "react";
 
 function App() {
@@ -10,9 +9,13 @@ function App() {
 
   const onEntryFormClick = () => setShowEntryForm(!showEntryForm)
 
+  const updateUserPosition = (latlng) => {
+    setUserPosition(latlng)
+    console.log(userPosition)
+  }
   return (
     <div className="root-container">
-      <MainPage onEntryFormClick = {onEntryFormClick} />
+      <MainPage onEntryFormClick = {onEntryFormClick} updateUserPosition={updateUserPosition} />
       {showEntryForm && <EntryForm onEntryFormClick = {onEntryFormClick}/>}
     </div>
   );

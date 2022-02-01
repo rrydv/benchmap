@@ -5,22 +5,31 @@ import json
 from datetime import datetime
 import os
 import ssl
-uri = os.environ.get("MONGO_DB")
+
+URI = os.environ.get("MONGO_DB")
 
 
-def connect_DB(uri):
-    client = MongoClient(uri,ssl_cert_reqs=ssl.CERT_NONE) #change this 
-    return client
+def connect_DB():
+    client = MongoClient(URI) #change this 
+    db = client['benchmap']
+    collection = db['benches']
+    return collection
 
 def add_record(collection, bench_params:dict) -> None:
+    if bench_params is None:
+        raise ValueError
+    
     dt_obj = datetime.now()
     epoch_sec = int(dt_obj.timestamp())
     bench_params["date_created"] = epoch_sec
+    
+    collection = connect_DB()
     collection.insert_one(bench_params)
-    print("success")
+    
+    return
     
 def fetch_benches() -> list:
-    with MongoClient(uri) as client:
+    with MongoClient(URI) as client:
         db = client["benchmap"]
         collection = db["benches"]
         result = json.loads(json_util.dumps(collection.find()))

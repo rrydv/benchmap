@@ -26,7 +26,7 @@ const EntryForm = ({onEntryFormClick}) => {
   };
   
   const handleFileInput = (e) =>{
-    setFiles({...files,[e.target.name] :e.target.files[0]})
+    setFiles({...files,[e.target.name] : e.target.files[0]})
   }
   //form submission
   const handleSubmit = (e) => {

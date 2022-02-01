@@ -12,18 +12,16 @@ const EntryFormMap = ({ updateLocationForm }) => {
   };
 
   return (
-    <Box sx={{
-
-    }}>
+    <div>
       <MapContainer center={[49.28, -122.9]} zoom={12} style={{height:'40vh'}}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <UserLocationMarker />
+        
         <OnClickLocationMarker updateLocation={updateLocation} />
       </MapContainer>
-    </Box>
+    </div>
   );
 };
 
