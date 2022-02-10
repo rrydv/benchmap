@@ -3,12 +3,15 @@ import {Box} from '@mui/material'
 import { useState } from "react";
 import OnClickLocationMarker from "./OnClickLocationMarker";
 import UserLocationMarker from "./UserLocationMarker";
+import { useFormikContext } from "formik";
 
-const EntryFormMap = ({ updateLocationForm }) => {
+const EntryFormMap = ({updateLocationForm}) => {
   const [location, setLocation] = useState([]);
+  const {setFieldValue} = useFormikContext()
   const updateLocation = (latlng) => {
     setLocation(latlng);
-    updateLocationForm(latlng);
+    updateLocationForm(latlng, setFieldValue);
+    console.log(latlng)
   };
 
   return (

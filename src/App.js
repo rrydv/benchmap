@@ -5,9 +5,9 @@ import { useState } from "react";
 
 function App() {
   const [userPosition, setUserPosition] = useState([]);
-  const [showEntryForm, setShowEntryForm] = useState(true)
+  const [showEntryForm, setShowEntryForm] = useState(false)
 
-  const onEntryFormClick = () => setShowEntryForm(!showEntryForm)
+  const showEntryFormClick = () => setShowEntryForm(!showEntryForm)
 
   const updateUserPosition = (latlng) => {
     setUserPosition(latlng)
@@ -15,8 +15,8 @@ function App() {
   }
   return (
     <div className="root-container">
-      <MainPage onEntryFormClick = {onEntryFormClick} updateUserPosition={updateUserPosition} />
-      {showEntryForm && <EntryForm onEntryFormClick = {onEntryFormClick}/>}
+      <MainPage showEntryFormClick = {showEntryFormClick} updateUserPosition={updateUserPosition} />
+      {showEntryForm && <EntryForm showEntryFormClick = {showEntryFormClick}/>}
     </div>
   );
 }

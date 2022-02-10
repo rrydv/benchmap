@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { Formik, Field, Form } from "formik";
+import {useState} from 'react'
+import { Formik} from 'formik';
+import * as yup from 'yup';
 import EntryFormMap from "./EntryFormMap";
 import {
   TextField,
@@ -8,41 +9,25 @@ import {
   Rating,
   Typography,
   Grid,
-  Divider,
+  FormHelperText
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import CircularProgress from '@mui/material/CircularProgress'
+import { ErrorSharp } from "@mui/icons-material";
+import EntryFormBackground from "./EntryFormBackground";
 
-const EntryForm = ({onEntryFormClick}) => {
-  const [locationForm, setLocationForm] = useState(null);
-  const [formState, setFormState] = useState({});
-  const [files,setFiles] = useState(null)
-  const [ratingValue, setRatingValue] = useState();
+
+const EntryForm = ({showEntryFormClick}) => {
+  const [submitted,setSubmitted] = useState(false)
   
-  const updateLocationForm = (latlng) => setLocationForm(latlng);
-  //input handlers
-  const handleChange = (e) => {
-    setFormState({ [e.target.name]: e.target.value });
-  };
-  
-  const handleFileInput = (e) =>{
-    setFiles({...files,[e.target.name] : e.target.files[0]})
+  const updateLocationForm = (latlng, setFieldValue) => {
+    setFieldValue("lat",latlng.lat)
+    setFieldValue("lng",latlng.lng)
   }
-  //form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const result = {
-      ...formState,
-      lat: locationForm.lat, //some weird stuff happening in the form, so setting it here from state
-      lng: locationForm.lng,
-      rating: ratingValue,
-    };
 
-    const formData = new FormData()
-    Object.keys(result).forEach(key => formData.append(key, result[key]));
-    Object.keys(files).forEach(key => formData.append(key, files[key]));
-    
-    console.log([...formData.values()]);
+  //form submission
+  const postForm = (formData) => {
     
     const url = `${document.URL}/add_bench`
     fetch(url,{
@@ -57,63 +42,83 @@ const EntryForm = ({onEntryFormClick}) => {
     )
   };
 
+  const fileSizeValidation = (file) =>{
+    const MAX_SIZE = 10485760 //10 megabytes
+    return file ? file.size < MAX_SIZE ? true : false : false
+  }
 
+  const FormSchema = yup.object().shape({
+    area: yup.string()
+    .min(5, "Name must be at least 5 characters.")
+    .max(20, "Name can't be more than 20 characters.")
+    .required("Required"),
+    benchRating: yup.number()
+    .min(0.5, "Rating can't be less than 0.5!")
+    .max(5, "Rating can't be more than 5!")
+    .required("Required"),
+    lat: yup.number()
+    .required(),
+    lng: yup.number()
+    .required(),
+    viewPhoto: yup.mixed()
+    .required("Need at least one photo from the bench!")
+    .test("is-below-10mb","Max file size is 10mb",
+    fileSizeValidation)
 
-  //close form on click outside the form div
-  const entryFormRef = useRef()
-  const handleClickOutside = e => {
-    if (!entryFormRef.current.contains(e.target)) {
-        onEntryFormClick();
-    }
-  };
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  });
-
+    //add benchPhoto validation
+  })
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        width: "100wh",
-        height: "100vh",
-        height: {xs: "calc(var(--vh, 1vh)*100)", lg: '100vh'},
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(50,50,50,0.7)",
-        position: "absolute",
-        m: "0",
-        zIndex: "appBar",
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0,
+    <EntryFormBackground showEntryFormClick={showEntryFormClick}>
+      <Formik
+      initialValues = {{
+        lat: "",
+        lng: "",
+        area: "",
+        benchRating: 0,
+        benchPhoto: null,
+        viewPhoto: null
       }}
-    >
-      <Box
-        p={1}
-        sx={{
-          backgroundColor: "#FFF",
-          borderRadius: "0.5%",
-          display:'flex',
-          flexDirection:'column',
-          width:'90%',
-          maxHeight:'100%',
-          overflowY:'auto'
-        }}
-        ref={entryFormRef}
+      
+      validationSchema = {FormSchema}
+      
+      onSubmit= {(values,actions)=> {
+        
+        console.log(values)
+        const formData = new FormData()
+        Object.keys(values).forEach(key => formData.append(key, values[key]));
+        console.log([...formData.values()]);
+        postForm(formData)
+        actions.setSubmitting(false)
+      }}
       >
+      {({values, errors, touched, 
+      handleChange, handleBlur, handleSubmit, 
+      setFieldValue, isSubmitting}) => (
         <form onSubmit = {handleSubmit} method="POST" encType="multipart/form-data">
           <Box
           sx={{
             display:'flex',
             justifyContent:'right'
           }}>
-            <Button onClick={onEntryFormClick}>
+            <Button onClick={showEntryFormClick}>
               <CloseIcon />
             </Button>
           </Box>
+          {isSubmitting && !submitted ? 
+          <Box sx = {{
+            display:'flex',
+            justifyContent:'center',
+            alignItems:'center',
+            minHeight:"300px",
+            flexDirection:"column"
+          }}
+          > <div> Submitting... </div><CircularProgress size = {60} style = {{padding:"10px"}} /> 
+          </Box>
+          
+          : submitted ? "Test" 
+          
+          :
           <Grid container={true} spacing={2} align="center">
             <Grid item xs={12}>
               <EntryFormMap
@@ -128,8 +133,10 @@ const EntryForm = ({onEntryFormClick}) => {
                 label="Latitude"
                 variant="filled"
                 disabled
-                value={locationForm === null ? " " : locationForm.lat}
+                value={values.lat === null ? " " : values.lat}
                 size="small"
+                error = {errors.lat && touched.lat ? true : false}
+                helperText = {errors.lat && touched.area ? errors.lat : null}
               />
               {/* onChange is not handled here, but in the submit function */}
             </Grid>
@@ -140,28 +147,32 @@ const EntryForm = ({onEntryFormClick}) => {
                 label="Longitude"
                 variant="filled"
                 disabled
-                value={locationForm === null ? " " : locationForm.lng}
+                value={values.lng === null ? " " : values.lng}
                 size="small"
+                error = {errors.lng && touched.lng ? true : false}
+                helperText = {errors.lng && touched.lng ? errors.lng : null}
               />
             </Grid>
             <Grid item xs={6}>
               <Typography component="legend">Bench Rating</Typography>
               <Rating
                 name="benchRating"
-                value={null}
                 precision={0.5}
-                value={ratingValue}
-                onChange={(e, newValue) => setRatingValue(newValue)}
+                value={values.benchRating}
+                onChange={(e, newValue) => setFieldValue("benchRating", newValue)}
               />
+              {errors.benchRating && touched.benchRating && <FormHelperText error={true} style = {{display:"flex", justifyContent:"center"}}>Must provide a rating</FormHelperText>}
             </Grid>
             <Grid item xs={6}>
               <TextField
                 id="outlined-helperText"
                 label="Area"
-                helperText="e.g. Lighthouse Park"
+                helperText={errors.area && touched.area ? errors.area : "e.g. Lighthouse Park"}
                 onChange={handleChange}
+                onBlur = {handleBlur}
                 name="area"
                 size="small"
+                error = {errors.area && touched.area ? true : false}
               />
             </Grid>
             
@@ -169,16 +180,17 @@ const EntryForm = ({onEntryFormClick}) => {
             <Grid item xs={6}>
               <Button variant="contained" component="label">
               <AddAPhotoIcon/>&nbsp;Bench Photo 
-              <input name="benchPhoto" type="file" accept="image/png, image/jpeg" onChange={handleFileInput} hidden />
+              <input name="benchPhoto" type="file" accept="image/png, image/jpeg" 
+              onChange={(e)=>setFieldValue(e.target.name,e.target.files[0])} hidden />
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <Box>
               <Button variant="contained" component="label">
                 <AddAPhotoIcon/>&nbsp;View from Bench
-                <input name="viewPhoto" type="file" accept="image/png, image/jpeg" onChange={handleFileInput} hidden />
+                <input name="viewPhoto" type="file" accept="image/png, image/jpeg" 
+                onChange={(e)=>setFieldValue(e.target.name,e.target.files[0])} hidden />
               </Button>
-              </Box>
+              {errors.viewPhoto && touched.viewPhoto && <FormHelperText error={true} style = {{display:"flex", justifyContent:"center"}}>{errors.viewPhoto}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12}>
@@ -186,10 +198,11 @@ const EntryForm = ({onEntryFormClick}) => {
                 Submit
               </Button>
             </Grid>
-          </Grid>
+          </Grid>}
         </form>
-      </Box>
-    </Box>
+      )}
+        </Formik>
+  </EntryFormBackground>
   );
 };
 

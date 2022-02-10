@@ -3,7 +3,7 @@ import {Box} from '@mui/material'
 import Navigation from './Navigation'
 import MainMap from './MainMap'
 
-const MainPage = ({onEntryFormClick, updateUserPosition}) =>{
+const MainPage = ({showEntryFormClick, updateUserPosition}) =>{
 
     useEffect(()=>{
         const vh = window.innerHeight * 0.01
@@ -19,7 +19,7 @@ const MainPage = ({onEntryFormClick, updateUserPosition}) =>{
             display: 'flex',
             flexDirection:'column'
         }}>
-        <Navigation onEntryFormClick = {onEntryFormClick} />
+        <Navigation showEntryFormClick = {showEntryFormClick} />
         <MainMap updateUserPosition = {updateUserPosition} />
 
         </Box>

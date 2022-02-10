@@ -15,7 +15,7 @@ def connect_DB():
     collection = db['benches']
     return collection
 
-def add_record(collection, bench_params:dict) -> None:
+def add_record(bench_params:dict) -> None:
     if bench_params is None:
         raise ValueError
     
@@ -26,7 +26,7 @@ def add_record(collection, bench_params:dict) -> None:
     collection = connect_DB()
     collection.insert_one(bench_params)
     
-    return
+    return 200
     
 def fetch_benches() -> list:
     with MongoClient(URI) as client:
