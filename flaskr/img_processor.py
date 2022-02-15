@@ -6,6 +6,12 @@ import os
 AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
 AWS_SECRET = os.environ.get("AWS_SECRET")
 
+class InappropriateImageError(Exception):
+    pass
+
+class GenericImageProcessFailError(Exception):
+    pass
+
 def resize_image(image, height = 1080):
     """
     resizes image while maintaining aspect ratio.
@@ -50,8 +56,12 @@ class AWS:
         if not response['ModerationLabels']:
             return True
 
-        else: #need to handle the cases with outputs to propagate error to user
-            return False 
+        else:
+            confidence = str(round(response["ModerationLabels"][0]["Confidence"],0))+"%"
+            labelname = response["ModerationLabels"][0]["Name"]
+            msg = "\n"+labelname + " " + confidence
+            #need to handle the cases with outputs to propagate error to user
+            raise InappropriateImageError(f"Submitted image contains inappropriate imagery:{msg}")
 
     def upload(self, input:BytesIO, uuid:str, name:str) -> str:
         file_path = "photos/" + uuid + "_" + name + ".jpg"
@@ -68,12 +78,10 @@ def process_img(img_input, uuid:str, name:str):
     if aws.moderate(resized_img):
         result_path = aws.upload(resized_img, uuid, name)
         return result_path
-    else:
-        return "error!", 403
+    raise GenericImageProcessFailError("Your image(s) were not processed for some mysterious reason.")
 
 
 if __name__ == "__main__":
-    print(AWS_SECRET, AWS_ACCESS_KEY)
     import uuid
     str_uuid = str(uuid.uuid4())
     name = "testimage"

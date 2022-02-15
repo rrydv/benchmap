@@ -46,7 +46,7 @@ const EntryForm = ({onEntryFormClick}) => {
     
     console.log([...formData.values()]);
     
-    const url = `${document.URL}/add_bench`
+    const url = 'http://127.0.0.1:5000/add_bench' //`${document.URL}/add_bench`
     fetch(url,{
       method:'POST',
       body: formData

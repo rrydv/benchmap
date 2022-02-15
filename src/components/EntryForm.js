@@ -1,7 +1,8 @@
-import {useState} from 'react'
+import {useState, useRef} from 'react'
 import { Formik} from 'formik';
 import * as yup from 'yup';
 import EntryFormMap from "./EntryFormMap";
+import EntryFormFeedback from './EntryFormFeedback';
 import {
   TextField,
   Button,
@@ -13,13 +14,18 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import CircularProgress from '@mui/material/CircularProgress'
-import { ErrorSharp } from "@mui/icons-material";
-import EntryFormBackground from "./EntryFormBackground";
 
+import { ErrorSharp, RepeatOneSharp } from "@mui/icons-material";
+import CircularProgress from '@mui/material/CircularProgress'
+import EntryFormBackground from "./EntryFormBackground";
+import CheckIcon from '@mui/icons-material/Check';
+import ErrorIcon from '@mui/icons-material/Error';
+import Fab from '@mui/material/Fab';
 
 const EntryForm = ({showEntryFormClick}) => {
-  const [submitted,setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
+  const httpResponseRef = useRef()
   
   const updateLocationForm = (latlng, setFieldValue) => {
     setFieldValue("lat",latlng.lat)
@@ -27,19 +33,20 @@ const EntryForm = ({showEntryFormClick}) => {
   }
 
   //form submission
-  const postForm = (formData) => {
+  const postForm = async (formData) => {
     
-    const url = `${document.URL}/add_bench`
-    fetch(url,{
+    const url = 'http://127.0.0.1:5000/add_bench' //`${document.URL}/add_bench`
+    const response = await fetch(url,{
       method:'POST',
       body: formData
-    }).then((response)=>
-      response.text
-    ).then((text) =>
-      console.log(text)
-    ).catch((err)=>
-      console.log(err)
-    )
+    })
+    const httpResponse = await response.text()
+
+    return {
+      httpOk: response.ok,
+      httpCode: response.status,
+      httpResponse: httpResponse
+    }
   };
 
   const fileSizeValidation = (file) =>{
@@ -67,7 +74,9 @@ const EntryForm = ({showEntryFormClick}) => {
 
     //add benchPhoto validation
   })
-
+  
+  const sleep = (ms) => new Promise((resolve)=>setTimeout(resolve, ms))
+  
   return (
     <EntryFormBackground showEntryFormClick={showEntryFormClick}>
       <Formik
@@ -82,14 +91,31 @@ const EntryForm = ({showEntryFormClick}) => {
       
       validationSchema = {FormSchema}
       
-      onSubmit= {(values,actions)=> {
-        
-        console.log(values)
+      onSubmit= {async (values,actions)=> {
         const formData = new FormData()
         Object.keys(values).forEach(key => formData.append(key, values[key]));
-        console.log([...formData.values()]);
-        postForm(formData)
-        actions.setSubmitting(false)
+        const {httpCode, httpResponse, httpOk} = await postForm(formData)
+        for (var value of formData.values()){
+          console.log(value)
+        }
+        
+        httpResponseRef.current = httpResponse
+        if (httpOk){
+          setSubmitted(true)
+          await sleep(4000)
+          setSubmitted(false)
+          actions.setSubmitting(false)
+        }
+        else{
+          setSubmitted(true)
+          setSubmitError(true)
+          await sleep(4000)
+          setSubmitted(false)
+          setSubmitError(false)
+          actions.setSubmitting(false)
+        }
+        
+        
       }}
       >
       {({values, errors, touched, 
@@ -105,19 +131,11 @@ const EntryForm = ({showEntryFormClick}) => {
               <CloseIcon />
             </Button>
           </Box>
-          {isSubmitting && !submitted ? 
-          <Box sx = {{
-            display:'flex',
-            justifyContent:'center',
-            alignItems:'center',
-            minHeight:"300px",
-            flexDirection:"column"
-          }}
-          > <div> Submitting... </div><CircularProgress size = {60} style = {{padding:"10px"}} /> 
-          </Box>
-          
-          : submitted ? "Test" 
-          
+          {isSubmitting ? 
+          <EntryFormFeedback 
+          submitted={submitted} 
+          submitError = {submitError} 
+          httpResponseRefCurrent = {httpResponseRef.current} />
           :
           <Grid container={true} spacing={2} align="center">
             <Grid item xs={12}>
@@ -136,9 +154,8 @@ const EntryForm = ({showEntryFormClick}) => {
                 value={values.lat === null ? " " : values.lat}
                 size="small"
                 error = {errors.lat && touched.lat ? true : false}
-                helperText = {errors.lat && touched.area ? errors.lat : null}
+                helperText = {errors.lat && touched.lat ? errors.lat : null}
               />
-              {/* onChange is not handled here, but in the submit function */}
             </Grid>
             <Grid item xs={6}>
               <TextField

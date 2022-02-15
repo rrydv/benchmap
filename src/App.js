@@ -1,6 +1,6 @@
 import "./App.css";
 import MainPage from './components/MainPage'
-import EntryForm from "./components/EntryForm";
+import EntryForm from "./components/EntryForm.js";
 import { useState } from "react";
 
 function App() {

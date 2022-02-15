@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, render_template, request, abort
 from db import fetch_benches, add_record
-from img_processor import process_img
+from img_processor import process_img, InappropriateImageError
 import uuid
 from dataclasses import dataclass
 from werkzeug.exceptions import BadRequestKeyError
 
+
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
+
+#from flask_cors import CORS
+#CORS(app)
 
 @app.route('/', methods = ["GET"])
 def home():
@@ -16,29 +20,34 @@ def home():
 def handle_bench_form():
     str_uuid = str(uuid.uuid4())
     form=request.form
+    print(form)
+    print(request.files)
     try:
         form_content={
             "area":form["area"],
             "lat":form["lat"],
             "lng":form["lng"],
-            "rating":form["rating"],
+            "rating":form["benchRating"],
             "uuid":str_uuid
         }
     except BadRequestKeyError:
-        abort(400)
+        return "Couldn't process your request, form is missing required fields!", 400
     
-    for key in request.files:
-        img_result = process_img(img_input = request.files[key], 
-                    uuid = str_uuid, name = key)
-        if type(img_result) == str:
-            form_content[key] = img_result
-        else:
-            return img_result
-    
+
     try:
+        for key in request.files:
+            img_result = process_img(img_input = request.files[key], 
+                        uuid = str_uuid, name = key)
+            if type(img_result) == str:
+                form_content[key] = img_result
+    except InappropriateImageError as e:
+        return str(e), 400
+    
+        """try:
         add_record(form_content)
     except ValueError:
-        abort(400, "Empty form was provided, can't add data!")
+        abort(400, "Empty form was provided, can't add data!") """
+    return "Your bench was successfully added!", 200
 
         
 
@@ -61,4 +70,5 @@ class BenchForm:
 
 
 if __name__ == "__main__":
+    #app.run(debug=True, host='0.0.0.0', port=5000)
     app.run()
