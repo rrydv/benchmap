@@ -14,13 +14,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-
-import { ErrorSharp, RepeatOneSharp } from "@mui/icons-material";
-import CircularProgress from '@mui/material/CircularProgress'
 import EntryFormBackground from "./EntryFormBackground";
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
-import Fab from '@mui/material/Fab';
+
 
 const EntryForm = ({showEntryFormClick}) => {
   const [submitted, setSubmitted] = useState(false)
@@ -35,7 +30,7 @@ const EntryForm = ({showEntryFormClick}) => {
   //form submission
   const postForm = async (formData) => {
     
-    const url = 'http://127.0.0.1:5000/add_bench' //`${document.URL}/add_bench`
+    const url = `${document.URL}/add_bench` //'http://127.0.0.1:5000/add_bench'
     const response = await fetch(url,{
       method:'POST',
       body: formData
@@ -104,7 +99,8 @@ const EntryForm = ({showEntryFormClick}) => {
           setSubmitted(true)
           await sleep(4000)
           setSubmitted(false)
-          actions.setSubmitting(false)
+          actions.resetForm()
+          //actions.setSubmitting(false)
         }
         else{
           setSubmitted(true)
@@ -112,7 +108,8 @@ const EntryForm = ({showEntryFormClick}) => {
           await sleep(4000)
           setSubmitted(false)
           setSubmitError(false)
-          actions.setSubmitting(false)
+          //actions.setSubmitting(false)
+          actions.resetForm()
         }
         
         
