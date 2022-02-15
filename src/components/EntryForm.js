@@ -89,7 +89,7 @@ const EntryForm = ({showEntryFormClick}) => {
       onSubmit= {async (values,actions)=> {
         const formData = new FormData()
         Object.keys(values).forEach(key => formData.append(key, values[key]));
-        const {httpCode, httpResponse, httpOk} = await postForm(formData)
+        const {httpResponse, httpOk} = await postForm(formData)
         for (var value of formData.values()){
           console.log(value)
         }

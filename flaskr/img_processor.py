@@ -1,6 +1,6 @@
 import boto3
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 import os
 
 AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
@@ -12,7 +12,7 @@ class InappropriateImageError(Exception):
 class GenericImageProcessFailError(Exception):
     pass
 
-def resize_image(image, height = 1080):
+def resize_image(image, height = 1440):
     """
     resizes image while maintaining aspect ratio.
     params:
@@ -25,7 +25,8 @@ def resize_image(image, height = 1080):
     """
     FIXED_HEIGHT = height
     image = Image.open(image)
-    if image.size[0] > FIXED_HEIGHT or image.size[1] > FIXED_HEIGHT:
+    image = ImageOps.exif_transpose(image) #apparently iPhone uploads image with orientation info which needs to be handled.
+    if image.size[1] > FIXED_HEIGHT:
         height_percent = (FIXED_HEIGHT / float(image.size[1]))
         width_size = int((float(image.size[0]) * float(height_percent)))
         image = image.resize((width_size, FIXED_HEIGHT), Image.NEAREST)
