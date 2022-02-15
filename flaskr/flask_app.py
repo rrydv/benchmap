@@ -8,8 +8,8 @@ from werkzeug.exceptions import BadRequestKeyError
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 
-from flask_cors import CORS
-CORS(app)
+#from flask_cors import CORS
+#CORS(app)
 
 @app.route('/', methods = ["GET"])
 def home():
@@ -70,5 +70,5 @@ class BenchForm:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    #app.run(debug=True, host='0.0.0.0', port=5000)
     app.run()
