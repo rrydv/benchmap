@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import EntryFormBackground from "./EntryFormBackground";
+import ClickableBackground from "./ClickableBackground";
 
 
 const EntryForm = ({showEntryFormClick}) => {
@@ -73,7 +73,7 @@ const EntryForm = ({showEntryFormClick}) => {
   const sleep = (ms) => new Promise((resolve)=>setTimeout(resolve, ms))
   
   return (
-    <EntryFormBackground showEntryFormClick={showEntryFormClick}>
+    <ClickableBackground showEntryFormClick={showEntryFormClick}>
       <Formik
       initialValues = {{
         lat: "",
@@ -216,7 +216,7 @@ const EntryForm = ({showEntryFormClick}) => {
         </form>
       )}
         </Formik>
-  </EntryFormBackground>
+  </ClickableBackground>
   );
 };
 

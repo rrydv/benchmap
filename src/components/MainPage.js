@@ -1,16 +1,28 @@
-import {useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import {Box} from '@mui/material'
 import Navigation from './Navigation'
 import MainMap from './MainMap'
 
-const MainPage = ({showEntryFormClick, updateUserPosition}) =>{
 
-    useEffect(()=>{
-        const vh = window.innerHeight * 0.01
-        document.documentElement.style.setProperty('--vh', `${vh}px`)},
-        [])
-
+const MainPage = ({showEntryFormClick, updateUserPosition, showPopUpClick}) =>{
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    let resizeWindow = () => {
+      setWindowHeight(window.innerHeight);
+      setWindowWidth(window.innerWidth)
+    };
+  
+    useEffect(() => {
+      resizeWindow();
+      window.addEventListener("resize", resizeWindow);
+      return () => window.removeEventListener("resize", resizeWindow);
+    }, []);
+    const vh = windowHeight * 0.01
+    document.documentElement.style.setProperty('--vh', `${vh}px`)
     
+
+
+      
 
     return (
         <Box sx={{
@@ -19,9 +31,12 @@ const MainPage = ({showEntryFormClick, updateUserPosition}) =>{
             display: 'flex',
             flexDirection:'column'
         }}>
-        <Navigation showEntryFormClick = {showEntryFormClick} />
-        <MainMap updateUserPosition = {updateUserPosition} />
-
+        <Navigation 
+          showEntryFormClick = {showEntryFormClick} />
+        <MainMap 
+          updateUserPosition = {updateUserPosition} 
+          showPopUpClick={showPopUpClick}/>
+        
         </Box>
     )
 

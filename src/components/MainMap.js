@@ -9,10 +9,19 @@ import UserLocationMarker from "./UserLocationMarker";
 
 
 
-const MainMap = ({updateUserPosition}) => {
+const MainMap = ({updateUserPosition, showPopUpClick}) => {
   const [data, setData] = useState([]);
   const [userLocationBool, setUserLocationBool] = useState(false)
 
+
+  let url = 'http://localhost:5000/benches'//`${document.URL}/benches`;
+
+  const fetchBenches = async () => {
+    const res = await fetch(url, { mode: "cors" });
+    const data = await res.json();
+    return data;
+  };
+  
   useEffect(() => {
     const getBenches = async () => {
       const benchesFromServer = await fetchBenches();
@@ -23,13 +32,6 @@ const MainMap = ({updateUserPosition}) => {
       setData({});
     };
   }, []);
-  let url = `${document.URL}/benches`;
-
-  const fetchBenches = async () => {
-    const res = await fetch(url, { mode: "cors" });
-    const data = await res.json();
-    return data;
-  };
 
   return (
     <div style={{height:'100%'}}>
@@ -40,7 +42,7 @@ const MainMap = ({updateUserPosition}) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MarkerClusterGroup>
-          <Points data={data} />
+          <Points data={data} showPopUpClick = {showPopUpClick} />
         </MarkerClusterGroup>
         {userLocationBool && <UserLocationMarker updateUserPosition={updateUserPosition}/>}
       </MapContainer>

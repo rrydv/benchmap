@@ -1,6 +1,6 @@
 import {Box} from "@mui/material"
 import CircularProgress from '@mui/material/CircularProgress'
-import EntryFormBackground from "./EntryFormBackground";
+import EntryFormBackground from "./ClickableBackground";
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import Fab from '@mui/material/Fab';

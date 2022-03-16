@@ -1,15 +1,20 @@
 from flask import Flask, jsonify, render_template, request, abort
 from db import fetch_benches, add_record
+from pymongo.errors import WriteError
 from img_processor import process_img, InappropriateImageError
 import uuid
 from dataclasses import dataclass
-from werkzeug.exceptions import BadRequestKeyError
+from werkzeug.exceptions import BadRequestKeyError, UnsupportedMediaType
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 
-#from flask_cors import CORS
-#CORS(app)
+""" from flask_cors import CORS
+CORS(app) """
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods = ["GET"])
 def home():
@@ -20,8 +25,8 @@ def home():
 def handle_bench_form():
     str_uuid = str(uuid.uuid4())
     form=request.form
-    print(form)
-    print(request.files)
+    #print(form)
+    #print(request.files)
     try:
         form_content={
             "area":form["area"],
@@ -30,23 +35,28 @@ def handle_bench_form():
             "rating":form["benchRating"],
             "uuid":str_uuid
         }
+        if not all(form_content.values()):
+            raise BadRequestKeyError
     except BadRequestKeyError:
-        return "Couldn't process your request, form is missing required fields!", 400
+        return "Couldn't process your request, form is missing required information!", 400
     
 
     try:
         for key in request.files:
-            img_result = process_img(img_input = request.files[key], 
-                        uuid = str_uuid, name = key)
-            if type(img_result) == str:
+            filename = request.files[key].filename
+            if allowed_file(filename):
+                img_result = process_img(img_input = request.files[key], 
+                            uuid = str_uuid, name = key)
                 form_content[key] = img_result
-    except InappropriateImageError as e:
+            else:
+                raise UnsupportedMediaType
+    except (InappropriateImageError, UnsupportedMediaType, WriteError) as e:
         return str(e), 400
     
-        """try:
+    try:
         add_record(form_content)
     except ValueError:
-        abort(400, "Empty form was provided, can't add data!") """
+        abort(400, "Empty form was provided, can't add data!")
     return "Your bench was successfully added!", 200
 
         

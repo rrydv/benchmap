@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 import {Box} from "@mui/material"
 
-const EntryFormBackground = ({showEntryFormClick, children}) => {
+const ClickableBackground = ({showEntryFormClick, children}) => {
   //close form on click outside the form div
-  const entryFormRef = useRef();
+  const BackgroundRef = useRef();
   const handleClickOutside = (e) => {
-    if (!entryFormRef.current.contains(e.target)) {
+    if (!BackgroundRef.current.contains(e.target)) {
       showEntryFormClick();
     }
   };
@@ -43,7 +43,7 @@ const EntryFormBackground = ({showEntryFormClick, children}) => {
         maxHeight: "100%",
         overflowY: "auto",
       }}
-      ref={entryFormRef}
+      ref={BackgroundRef}
     >
     {children}
 
@@ -52,4 +52,4 @@ const EntryFormBackground = ({showEntryFormClick, children}) => {
   )
 };
 
-export default EntryFormBackground
+export default ClickableBackground

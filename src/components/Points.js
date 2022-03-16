@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { CircleMarker, Marker, useMap } from "react-leaflet";
-const Points = ({ data }) => {
+const Points = ({ data, showPopUpClick }) => {
   const map = useMap();
   const [zoomLevel, setZoomLevel] = useState();
-
   useEffect(() => {
     setZoomLevel(map.getZoom());
   });
@@ -11,15 +10,20 @@ const Points = ({ data }) => {
   //console.log(Object.keys(map));
   //console.log(map.getZoom());
   return (
-    <div>
-      {data.map((bench) => (
+    <>
+      {data.map((data) => (
         <CircleMarker
-          key={bench._id.$oid}
-          center={[bench.lat, bench.lng]}
+          key={data._id.$oid}
+          center={[data.lat, data.lng]}
           radius={3}
+          eventHandlers = {{
+            click: (e)=>
+            
+            showPopUpClick(data.area, data.rating)
+          }}
         ></CircleMarker>
       ))}
-    </div>
+    </>
   );
 };
 

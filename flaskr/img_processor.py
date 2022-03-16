@@ -50,9 +50,7 @@ class AWS:
     
     def moderate(self, image_binary):
         response = self.rekognition.detect_moderation_labels(
-                    Image={
-                    'Bytes':image_binary
-                    })
+                    Image={'Bytes':image_binary})
 
         if not response['ModerationLabels']:
             return True
@@ -65,9 +63,9 @@ class AWS:
             raise InappropriateImageError(f"Submitted image contains inappropriate imagery:{msg}")
 
     def upload(self, input:BytesIO, uuid:str, name:str) -> str:
-        file_path = "photos/" + uuid + "_" + name + ".jpg"
-        self.bucket.put_object(Body = input, Key = file_path)
-        full_path = f"https://mapbench-photos.s3.us-west-2.amazonaws.com/{file_path}"
+        s3_file_path = "photos/" + uuid + "_" + name + ".jpg"
+        self.bucket.put_object(Body = input, Key = s3_file_path)
+        full_path = f"https://mapbench-photos.s3.us-west-2.amazonaws.com/{s3_file_path}"
         return full_path
         
 

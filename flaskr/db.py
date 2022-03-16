@@ -1,5 +1,6 @@
 from typing import OrderedDict
 from pymongo import MongoClient
+from pymongo.errors import WriteError
 from bson import json_util
 import json
 from datetime import datetime
@@ -25,6 +26,8 @@ def add_record(bench_params:dict) -> None:
     
     collection = connect_DB()
     collection.insert_one(bench_params)
+
+        
     
     return 200
     
