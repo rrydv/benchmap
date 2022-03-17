@@ -22,7 +22,7 @@ const Navigation = ({showEntryFormClick}) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             MapBench
           </Typography>
-          <Button color="inherit" onClick = {showEntryFormClick}>Add Bench</Button>
+          <Button color="inherit" onClick = {showEntryFormClick}>Add</Button>
         </Toolbar>
       </AppBar>
         </div>

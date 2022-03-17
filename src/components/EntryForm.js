@@ -91,13 +91,13 @@ const EntryForm = ({showEntryFormClick}) => {
         Object.keys(values).forEach(key => formData.append(key, values[key]));
         const {httpResponse, httpOk} = await postForm(formData)
         for (var value of formData.values()){
-          console.log(value)
+          console.log(value, typeof(value))
         }
         
         httpResponseRef.current = httpResponse
         if (httpOk){
           setSubmitted(true)
-          await sleep(4000)
+          await sleep(5000)
           setSubmitted(false)
           actions.resetForm()
           //actions.setSubmitting(false)
@@ -105,7 +105,7 @@ const EntryForm = ({showEntryFormClick}) => {
         else{
           setSubmitted(true)
           setSubmitError(true)
-          await sleep(4000)
+          await sleep(5000)
           setSubmitted(false)
           setSubmitError(false)
           //actions.setSubmitting(false)

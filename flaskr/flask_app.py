@@ -10,8 +10,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 
-""" from flask_cors import CORS
-CORS(app) """
+from flask_cors import CORS
+CORS(app)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -25,18 +25,21 @@ def home():
 def handle_bench_form():
     str_uuid = str(uuid.uuid4())
     form=request.form
-    #print(form)
+    print(type(form["lat"]))
     #print(request.files)
     try:
+        
         form_content={
             "area":form["area"],
-            "lat":form["lat"],
-            "lng":form["lng"],
-            "rating":form["benchRating"],
+            "lat":float(form["lat"]),
+            "lng":float(form["lng"]),
+            "rating":float(form["benchRating"]),
             "uuid":str_uuid
         }
         if not all(form_content.values()):
             raise BadRequestKeyError
+    except ValueError:
+        return "Couldn't process your request, invalid input was provied", 400
     except BadRequestKeyError:
         return "Couldn't process your request, form is missing required information!", 400
     
@@ -80,5 +83,5 @@ class BenchForm:
 
 
 if __name__ == "__main__":
-    #app.run(debug=True, host='0.0.0.0', port=5000)
-    app.run()
+    app.run(debug=True, host='0.0.0.0', port=5000)
+    #app.run()
