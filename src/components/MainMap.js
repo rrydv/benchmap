@@ -14,7 +14,7 @@ const MainMap = ({updateUserPosition, showPopUpClick}) => {
   const [userLocationBool, setUserLocationBool] = useState(false)
 
 
-  let url = 'http://localhost:5000/benches'//`${document.URL}/benches`;
+  let url = `${document.URL}/benches`; //'http://localhost:5000/benches'
 
   const fetchBenches = async () => {
     const res = await fetch(url, { mode: "cors" });
