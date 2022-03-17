@@ -10,8 +10,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 
-from flask_cors import CORS
-CORS(app)
+""" from flask_cors import CORS
+CORS(app) """
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -83,5 +83,5 @@ class BenchForm:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
-    #app.run()
+    #app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run()
