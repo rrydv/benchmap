@@ -15,7 +15,7 @@ const MainMap = ({updateUserPosition, showPopUpClick}) => {
   const [ipLat, setIpLat] = useState(null)
   const [ipLng, setIpLng] = useState(null)
   //fetch benches
-  let data_url = 'http://localhost:5000/benches' //`${document.URL}/benches`;
+  let data_url = `${document.URL}/benches`; //'http://localhost:5000/benches' 
 
   const fetchBenches = async () => {
     const res = await fetch(data_url, { mode: "cors" });
