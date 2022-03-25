@@ -73,7 +73,7 @@ const EntryForm = ({showEntryFormClick}) => {
   const sleep = (ms) => new Promise((resolve)=>setTimeout(resolve, ms))
   
   return (
-    <ClickableBackground showEntryFormClick={showEntryFormClick}>
+    <ClickableBackground closeOnClick={showEntryFormClick}>
       <Formik
       initialValues = {{
         lat: "",
@@ -122,7 +122,7 @@ const EntryForm = ({showEntryFormClick}) => {
           <Box
           sx={{
             display:'flex',
-            justifyContent:'right'
+            justifyContent:'flex-end'
           }}>
             <Button onClick={showEntryFormClick}>
               <CloseIcon />

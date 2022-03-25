@@ -12,16 +12,41 @@ import UserLocationMarker from "./UserLocationMarker";
 const MainMap = ({updateUserPosition, showPopUpClick}) => {
   const [data, setData] = useState([]);
   const [userLocationBool, setUserLocationBool] = useState(false)
-
-
-  let url = `${document.URL}/benches`; //'http://localhost:5000/benches'
+  const [ipLat, setIpLat] = useState(null)
+  const [ipLng, setIpLng] = useState(null)
+  //fetch benches
+  let data_url = 'http://localhost:5000/benches' //`${document.URL}/benches`;
 
   const fetchBenches = async () => {
-    const res = await fetch(url, { mode: "cors" });
+    const res = await fetch(data_url, { mode: "cors" });
     const data = await res.json();
     return data;
   };
   
+  //
+  const ip_url = 'http://ip-api.com/json/'
+  const request = fetch(ip_url).then(response => response.json()).then(json => {
+    setIpLat(json.lat)
+    setIpLng(json.lng)
+  })
+  let timeoutId = null;
+  const timeout = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => {
+          reject(new Error('Timeout'));
+      }, 1000)
+  });
+
+  Promise.race([ request, timeout ]).then(
+      response => {
+          timeoutId && clearTimeout(timeoutId)
+          // handle response
+      },
+      error => {
+          timeoutId && clearTimeout(timeoutId)
+          // handle error
+      })
+
+
   useEffect(() => {
     const getBenches = async () => {
       const benchesFromServer = await fetchBenches();
@@ -32,6 +57,7 @@ const MainMap = ({updateUserPosition, showPopUpClick}) => {
       setData({});
     };
   }, []);
+
 
   return (
     <div style={{height:'100%'}}>

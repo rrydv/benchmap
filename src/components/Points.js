@@ -10,15 +10,16 @@ const Points = ({ data }) => {
 
   const [showPopUp, setShowPopUp] = useState(false);
   const [PopUpContent, setPopUpContent] = useState({});
-  const showPopUpClick = (area, rating, benchPhoto, viewPhoto) => {
+  const showPopUpClick = (lat, lng, area, rating, benchPhoto, viewPhoto) => {
     const content = {
+      lat: lat, 
+      lng: lng,
       area: area,
       rating: rating,
       benchPhoto: benchPhoto,
       viewPhoto: viewPhoto
     }
     setPopUpContent(content)
-    console.log(PopUpContent);
     setShowPopUp(!showPopUp);
   };
   //console.log(Object.keys(map));
@@ -31,12 +32,14 @@ const Points = ({ data }) => {
           center={[data.lat, data.lng]}
           radius={3}
           eventHandlers={{
-            click: (e) => showPopUpClick(data.area, data.rating, data.benchPhoto, data.viewPhoto),
+            click: (e) => showPopUpClick(data.lat, data.lng, data.area, data.rating, data.benchPhoto, data.viewPhoto),
           }}
         ></CircleMarker>
       ))}
       {showPopUp && (
         <PopUpCard
+          lat = {PopUpContent["lat"]}
+          lng = {PopUpContent["lng"]}
           showPopUpClick={showPopUpClick}
           area={PopUpContent["area"]}
           rating={PopUpContent["rating"]}

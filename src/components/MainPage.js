@@ -18,7 +18,9 @@ const MainPage = ({showEntryFormClick, updateUserPosition, showPopUpClick}) =>{
       return () => window.removeEventListener("resize", resizeWindow);
     }, []);
     const vh = windowHeight * 0.01
+    const vw = windowWidth * 0.01
     document.documentElement.style.setProperty('--vh', `${vh}px`)
+    document.documentElement.style.setProperty('--vw', `${vw}px`)
     
 
 

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import {Box} from "@mui/material"
 
-const ClickableBackground = ({showEntryFormClick, children}) => {
+const ClickableBackground = ({closeOnClick, children}) => {
   //close form on click outside the form div
   const BackgroundRef = useRef();
   const handleClickOutside = (e) => {
     if (!BackgroundRef.current.contains(e.target)) {
-      showEntryFormClick();
+      closeOnClick();
     }
   };
   useEffect(() => {
