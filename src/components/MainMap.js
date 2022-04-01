@@ -65,7 +65,7 @@ const MainMap = ({updateUserPosition, showPopUpClick}) => {
         
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url= 'https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicnJkdm4iLCJhIjoiY2wxZ3I0eWM5MWNnMjNqcGNodHFxNms4OSJ9.OP_tvYEGO5ITPC7NAIgTbg' //"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MarkerClusterGroup>
           <Points data={data} showPopUpClick = {showPopUpClick} />

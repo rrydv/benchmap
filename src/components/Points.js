@@ -27,14 +27,14 @@ const Points = ({ data }) => {
   return (
     <>
       {data.map((data) => (
-        <CircleMarker
+        <Marker
           key={data._id.$oid}
-          center={[data.lat, data.lng]}
+          position={[data.lat, data.lng]}
           radius={3}
           eventHandlers={{
             click: (e) => showPopUpClick(data.lat, data.lng, data.area, data.rating, data.benchPhoto, data.viewPhoto),
           }}
-        ></CircleMarker>
+        ></Marker>
       ))}
       {showPopUp && (
         <PopUpCard
