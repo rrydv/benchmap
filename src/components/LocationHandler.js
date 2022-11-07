@@ -14,7 +14,7 @@ const LocationHandler = ({}) => {
     const map = useMap()
     useEffect(() => {
         const ip_key = '383f2970-c0f9-11ec-8f6c-7ba9649aa1e3'
-        const ip_url = `https://api.freegeoip.app/json/?apikey=${ip_key}`
+        const ip_url = `https://api.ipbase.com/v1/json/?apikey=${ip_key}`
         const fetchIPLocation = async () => { 
             const result = await fetch(ip_url);
             const json = await result.json();
