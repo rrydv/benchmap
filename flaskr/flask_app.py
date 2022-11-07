@@ -5,13 +5,16 @@ from img_processor import process_img, InappropriateImageError
 import uuid
 from dataclasses import dataclass
 from werkzeug.exceptions import BadRequestKeyError, UnsupportedMediaType
-
+import os
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 
-""" from flask_cors import CORS
-CORS(app) """
+ENV = os.environ.get("REACT_APP_BENCH_ENV")
+
+if ENV == 'Dev':
+    from flask_cors import CORS
+    CORS(app)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -67,7 +70,8 @@ def handle_bench_form():
 @app.route('/benches')
 def all_benches():
     resp = jsonify(fetch_benches())
-    #resp.headers['Access-Control-Allow-Origin'] = '*'
+    if ENV=='Dev':
+        resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
 
@@ -83,6 +87,7 @@ class BenchForm:
 
 
 if __name__ == "__main__":
-    print("herokutest")
-    app.run(debug=True, host='0.0.0.0', port=5000)
-    #app.run()
+    if ENV == 'Dev':
+        app.run(debug=True, host='0.0.0.0', port=5000)
+    else:
+        app.run()

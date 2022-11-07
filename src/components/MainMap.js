@@ -10,9 +10,9 @@ import LocationHandler from "./LocationHandler";
 const MainMap = ({updateUserPosition, showPopUpClick}) => {
   const [data, setData] = useState([]);
 
-  //fetch benches
-  let data_url = `${document.URL}/benches`; //'http://localhost:5000/benches' 
-
+  let data_url = process.env.REACT_APP_BENCH_ENV === 'Dev' ? 'http://localhost:5000/benches' : `${document.URL}/benches`
+  console.log(process.env.REACT_APP_BENCH_ENV)
+  //debugger;
   const fetchBenches = async () => {
     const res = await fetch(data_url, { mode: "cors" });
     const data = await res.json();
